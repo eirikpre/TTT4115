@@ -1,30 +1,33 @@
 %% o1
-N = 1000;
-x = randn(1,N);
-p = .9;
-x(1) = x(1) * sqrt(1-p.^2);
-for i = [2 N]
-    x(i) = p*x(i-1) + sqrt(1-p.^2)*x(i);
+close all;
+N = 1000;p = .9;
+average = 1000;
+corrx = 0;
+x = zeros(1,N);
+for j = 1:average
+    x = sqrt(1-p^2)*randn(1,N);
+    x = filter( 1,[1 -p],x);
+    corrx = corrx + xcorr(x);
 end
-corrx = xcorr(x);
+corrx = corrx/average/N;
 powerx = fft(corrx);
-subplot(2,1,1); plot( -N+1:1:N-1 , corrx );
-subplot(2,1,2); plot(abs(powerx));
+figure; set(gcf,'name','oppg1','numbertitle','off');
+subplot(2,1,1); plot(-20:20, corrx(N-20:N+20)),title('Correlation');
+subplot(2,1,2); plot(abs(powerx)),title('Power Density');
+
 
 % o2
 
-Fs = 44000;
-f = 0:1/(Fs-1):1;
-sigmaU = 1;
-P = 1;
-bitRate = .75;
-d = 2*pi*exp(1)*sigmaU*2.^(-2*bitRate);
-sigmaQ = (d/12)^2;
-lagrange = (sigmaQ/(P + sigmaQ))*sum(powerx);
-G = sqrt( sigmaQ/lagrange./(powerx)-sigmaQ./powerx);
-H = sqrt(lagrange*powerx/sigmaQ) - lagrange;
-% figure
-% plot(abs(fft(G,1)));
-%powerout = 1/lagrange*sqrt(powerx.*sigmaQ) - sigmaQ;
-% figure();
-% plot(powerout);
+sigmaU = 1;     P = 1;      
+
+for bitRate = [.75] % [.75 2 5]
+    sigmaQ = ((2*pi*exp(1)*sigmaU*2^(-2*bitRate))^2)/12;
+    lagrange = ((sigmaQ/(P + sigmaQ))*sqrt(trapz(powerx)))^2;
+    fprintf('bitrate:%g  sigmaQ:%d   lagrange:%d\n',bitRate,sigmaQ,lagrange);
+    G = sqrt(sigmaQ./(lagrange.*powerx))-sigmaQ./powerx;
+    H = sqrt( lagrange.*powerx/sigmaQ) - lagrange;
+    figure(); 
+    set(gcf,'name',sprintf('Bitrate: %g',bitRate),'numbertitle','off')
+    subplot(2,1,1); plot(-.5:1/(2*N-2):.5, abs(G)),title('G(f)');
+    subplot(2,1,2); plot(-.5:1/(2*N-2):.5, abs(H)),title('H(f)');
+end
