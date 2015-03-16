@@ -1,0 +1,248 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>o1</title><meta name="generator" content="MATLAB 8.3"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2015-03-01"><meta name="DC.source" content="o1.m"><style type="text/css">
+html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
+
+html { min-height:100%; margin-bottom:1px; }
+html body { height:100%; margin:0px; font-family:Arial, Helvetica, sans-serif; font-size:10px; color:#000; line-height:140%; background:#fff none; overflow-y:scroll; }
+html body td { vertical-align:top; text-align:left; }
+
+h1 { padding:0px; margin:0px 0px 25px; font-family:Arial, Helvetica, sans-serif; font-size:1.5em; color:#d55000; line-height:100%; font-weight:normal; }
+h2 { padding:0px; margin:0px 0px 8px; font-family:Arial, Helvetica, sans-serif; font-size:1.2em; color:#000; font-weight:bold; line-height:140%; border-bottom:1px solid #d6d4d4; display:block; }
+h3 { padding:0px; margin:0px 0px 5px; font-family:Arial, Helvetica, sans-serif; font-size:1.1em; color:#000; font-weight:bold; line-height:140%; }
+
+a { color:#005fce; text-decoration:none; }
+a:hover { color:#005fce; text-decoration:underline; }
+a:visited { color:#004aa0; text-decoration:none; }
+
+p { padding:0px; margin:0px 0px 20px; }
+img { padding:0px; margin:0px 0px 20px; border:none; }
+p img, pre img, tt img, li img, h1 img, h2 img { margin-bottom:0px; } 
+
+ul { padding:0px; margin:0px 0px 20px 23px; list-style:square; }
+ul li { padding:0px; margin:0px 0px 7px 0px; }
+ul li ul { padding:5px 0px 0px; margin:0px 0px 7px 23px; }
+ul li ol li { list-style:decimal; }
+ol { padding:0px; margin:0px 0px 20px 0px; list-style:decimal; }
+ol li { padding:0px; margin:0px 0px 7px 23px; list-style-type:decimal; }
+ol li ol { padding:5px 0px 0px; margin:0px 0px 7px 0px; }
+ol li ol li { list-style-type:lower-alpha; }
+ol li ul { padding-top:7px; }
+ol li ul li { list-style:square; }
+
+.content { font-size:1.2em; line-height:140%; padding: 20px; }
+
+pre, code { font-size:12px; }
+tt { font-size: 1.2em; }
+pre { margin:0px 0px 20px; }
+pre.codeinput { padding:10px; border:1px solid #d3d3d3; background:#f7f7f7; }
+pre.codeoutput { padding:10px 11px; margin:0px 0px 20px; color:#4c4c4c; }
+pre.error { color:red; }
+
+@media print { pre.codeinput, pre.codeoutput { word-wrap:break-word; width:100%; } }
+
+span.keyword { color:#0000FF }
+span.comment { color:#228B22 }
+span.string { color:#A020F0 }
+span.untermstring { color:#B20000 }
+span.syscmd { color:#B28C00 }
+
+.footer { width:auto; padding:10px 0px; margin:25px 0px 0px; border-top:1px dotted #878787; font-size:0.8em; line-height:140%; font-style:italic; color:#878787; text-align:left; float:none; }
+.footer p { margin:0px; }
+.footer a { color:#878787; }
+.footer a:hover { color:#878787; text-decoration:underline; }
+.footer a:visited { color:#878787; }
+
+table th { padding:7px 5px; text-align:left; vertical-align:middle; border: 1px solid #d6d4d4; font-weight:bold; }
+table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px solid #d6d4d4; }
+
+
+
+
+
+  </style></head><body><div class="content"><h2>Contents</h2><div><ul><li><a href="#1">o1</a></li><li><a href="#2">2b</a></li></ul></div><h2>o1<a name="1"></a></h2><pre class="codeinput">close <span class="string">all</span>;
+N = 100; p = .9;
+average = 100;
+corrx = 0;
+x = zeros(1,N);
+l = 0:1/(2*(N-1)):1;
+
+<span class="keyword">for</span> j = 1:average
+    x = sqrt(1-p^2)*randn(1,N);
+    x = filter( 1,[1 -p],x);
+    corrx = corrx + xcorr(x);
+<span class="keyword">end</span>
+corrx = corrx/average/N;
+powerx = fft(corrx);
+figure; set(gcf,<span class="string">'name'</span>,<span class="string">'oppg1'</span>,<span class="string">'numbertitle'</span>,<span class="string">'off'</span>);
+
+powerx = abs(powerx);
+powerx = [powerx(N+1:2*N-1) powerx(1:N) ];
+<span class="comment">%%%%%  from theory</span>
+powerxT = @(f) (1-p^2)./((1-p*exp(-1j*2*pi*f)).*(1-p*exp(1j*2*pi*f)));
+sqPowerxT = @(f) sqrt(powerxT(f));
+freq = -0.5:1/(2*(N-1)):0.5;
+subplot(2,1,1); stem(-20:20, corrx(N-20:N+20)),title(<span class="string">'Correlation'</span>);
+subplot(2,1,2); plot(freq,powerx),title(<span class="string">'Power Density'</span>); hold <span class="string">on</span>;
+subplot(2,1,2); plot(freq,powerxT(freq),<span class="string">'r'</span>);
+<span class="comment">% o2</span>
+sigmaU = 1;     P = 1;
+
+<span class="keyword">for</span> bitRate = [.75 2 5]
+    sigmaQ = (2*pi*exp(1)*sigmaU*2^(-2*bitRate))/12;
+    lagrange =  (sigmaQ/(P + sigmaQ)*trapz(l,sqrt(powerx)))^2;
+    lagrangeT = (sigmaQ/(P + sigmaQ)*integral(sqPowerxT,-0.5,0.5))^2;
+    <span class="comment">%fprintf('bitrate:%g  sigmaQ:%d   lagrange:%d     lagrangeT:%d\n' ,bitRate,sigmaQ,lagrange,lagrangeT);</span>
+
+    G = sqrt( sigmaQ./(lagrange.*powerx))-sigmaQ./powerx;
+    H = sqrt( (lagrange.*powerx) /sigmaQ) - lagrange;
+
+    GT = sqrt( sigmaQ./(lagrangeT.*powerxT(freq)))- (sigmaQ./powerxT(freq));
+    HT = sqrt( (lagrangeT.*powerxT(freq)) /sigmaQ)- lagrangeT;
+
+    Sx_signal = powerx.*G.*H;
+    Sx_signalT = powerxT(freq).*G.*H;
+
+    Sx_noise = sigmaQ.*H;
+    Sx_noiseT = sigmaQ.*H;
+
+
+    figure();
+    set(gcf,<span class="string">'name'</span>,sprintf(<span class="string">'Bitrate: %g'</span>,bitRate),<span class="string">'numbertitle'</span>,<span class="string">'off'</span>)
+    subplot(2,2,1); plot(freq, abs(G)),title(<span class="string">'G(f)^2'</span>); hold <span class="string">on</span>;
+    subplot(2,2,1); plot(freq, abs(GT),<span class="string">'r'</span>), legend(<span class="string">'Theory'</span>,<span class="string">'Computed'</span>);
+    subplot(2,2,2); plot(freq, abs(H)),title(<span class="string">'H(f)^2'</span>); hold <span class="string">on</span>;
+    subplot(2,2,2); plot(freq, abs(HT),<span class="string">'r'</span>), legend(<span class="string">'Theory'</span>,<span class="string">'Computed'</span>);
+    subplot(2,2,3); plot(freq, abs(Sx_signal)),title(<span class="string">'Output Power Signal Density'</span>); hold <span class="string">on</span>;
+    subplot(2,2,3); plot(freq, abs(Sx_signalT),<span class="string">'r'</span>), legend(<span class="string">'Theory'</span>,<span class="string">'Computed'</span>);
+    subplot(2,2,4); plot(freq, abs(Sx_noise)),title(<span class="string">'Output Power Signal Density'</span>); hold <span class="string">on</span>;
+    subplot(2,2,4); plot(freq, abs(Sx_noiseT),<span class="string">'r'</span>), legend(<span class="string">'Theory'</span>,<span class="string">'Computed'</span>);
+    fprintf(<span class="string">'Bitrate: %g , SNR: %g \n'</span>, bitRate, 10*log10(Sx_signal/Sx_noise));
+<span class="keyword">end</span>
+</pre><pre class="codeoutput">Bitrate: 0.75 , SNR: 12.4724 
+Bitrate: 2 , SNR: 22.2554 
+Bitrate: 5 , SNR: 48.9704 
+</pre><img vspace="5" hspace="5" src="o1_01.png" alt=""> <img vspace="5" hspace="5" src="o1_02.png" alt=""> <img vspace="5" hspace="5" src="o1_03.png" alt=""> <img vspace="5" hspace="5" src="o1_04.png" alt=""> <h2>2b<a name="2"></a></h2><pre class="codeinput">close <span class="string">all</span>;
+<span class="comment">% "Simulering" (Gikk ikke s&aring; bra)</span>
+h = FrSamp(H)';
+g = FrSamp(G)';
+figure()
+subplot(1,2,1), stem(-10:10, g(N-10:N+10)), title(<span class="string">'g(n)'</span>);
+subplot(1,2,2), stem(-10:10, h(N-10:N+10)), title(<span class="string">'h(n)'</span>);
+
+<span class="comment">% for j = 1:average</span>
+<span class="comment">%     x = sqrt(1-p^2)*randn(1,N);</span>
+<span class="comment">%     x = filter( 1,[1 -p],x);</span>
+<span class="comment">%     gx = conv(g,x);</span>
+<span class="comment">%     y = conv(gx, h);</span>
+<span class="comment">% end</span>
+<span class="comment">% y = y/average;</span>
+<span class="comment">% figure(); stem(y(2*N:3*N));</span>
+<span class="comment">% figure()</span>
+<span class="comment">% stem(g);hold on</span>
+<span class="comment">%plot(abs(GT),'r')</span>
+</pre><img vspace="5" hspace="5" src="o1_05.png" alt=""> <p class="footer"><br><a href="http://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2014a</a><br></p></div><!--
+##### SOURCE BEGIN #####
+%% o1
+close all;
+N = 100; p = .9;
+average = 100;
+corrx = 0;
+x = zeros(1,N);
+l = 0:1/(2*(N-1)):1;
+
+for j = 1:average
+    x = sqrt(1-p^2)*randn(1,N);
+    x = filter( 1,[1 -p],x);
+    corrx = corrx + xcorr(x);
+end
+corrx = corrx/average/N;
+powerx = fft(corrx);
+figure; set(gcf,'name','oppg1','numbertitle','off');
+
+powerx = abs(powerx);
+powerx = [powerx(N+1:2*N-1) powerx(1:N) ];
+%%%%%  from theory
+powerxT = @(f) (1-p^2)./((1-p*exp(-1j*2*pi*f)).*(1-p*exp(1j*2*pi*f)));
+sqPowerxT = @(f) sqrt(powerxT(f));
+freq = -0.5:1/(2*(N-1)):0.5;
+subplot(2,1,1); stem(-20:20, corrx(N-20:N+20)),title('Correlation');
+subplot(2,1,2); plot(freq,powerx),title('Power Density'); hold on; 
+subplot(2,1,2); plot(freq,powerxT(freq),'r');
+% o2
+sigmaU = 1;     P = 1;      
+
+for bitRate = [.75 2 5]
+    sigmaQ = (2*pi*exp(1)*sigmaU*2^(-2*bitRate))/12;
+    lagrange =  (sigmaQ/(P + sigmaQ)*trapz(l,sqrt(powerx)))^2;
+    lagrangeT = (sigmaQ/(P + sigmaQ)*integral(sqPowerxT,-0.5,0.5))^2;
+    %fprintf('bitrate:%g  sigmaQ:%d   lagrange:%d     lagrangeT:%d\n' ,bitRate,sigmaQ,lagrange,lagrangeT);
+    
+    G = sqrt( sigmaQ./(lagrange.*powerx))-sigmaQ./powerx;
+    H = sqrt( (lagrange.*powerx) /sigmaQ) - lagrange;
+    
+    GT = sqrt( sigmaQ./(lagrangeT.*powerxT(freq)))- (sigmaQ./powerxT(freq));
+    HT = sqrt( (lagrangeT.*powerxT(freq)) /sigmaQ)- lagrangeT;
+    
+    Sx_signal = powerx.*G.*H;
+    Sx_signalT = powerxT(freq).*G.*H;
+    
+    Sx_noise = sigmaQ.*H;
+    Sx_noiseT = sigmaQ.*H;
+     
+    
+    figure(); 
+    set(gcf,'name',sprintf('Bitrate: %g',bitRate),'numbertitle','off')
+    subplot(2,2,1); plot(freq, abs(G)),title('G(f)^2'); hold on;
+    subplot(2,2,1); plot(freq, abs(GT),'r'), legend('Theory','Computed');
+    subplot(2,2,2); plot(freq, abs(H)),title('H(f)^2'); hold on;
+    subplot(2,2,2); plot(freq, abs(HT),'r'), legend('Theory','Computed');
+    subplot(2,2,3); plot(freq, abs(Sx_signal)),title('Output Power Signal Density'); hold on;
+    subplot(2,2,3); plot(freq, abs(Sx_signalT),'r'), legend('Theory','Computed');
+    subplot(2,2,4); plot(freq, abs(Sx_noise)),title('Output Power Signal Density'); hold on;
+    subplot(2,2,4); plot(freq, abs(Sx_noiseT),'r'), legend('Theory','Computed');
+    fprintf('Bitrate: %g , SNR: %g \n', bitRate, 10*log10(Sx_signal/Sx_noise));
+end
+%% 2b
+close all;
+% "Simulering" (Gikk ikke så bra)
+h = FrSamp(H)';
+g = FrSamp(G)';
+figure()
+subplot(1,2,1), stem(-10:10, g(N-10:N+10)), title('g(n)');
+subplot(1,2,2), stem(-10:10, h(N-10:N+10)), title('h(n)');
+
+% for j = 1:average
+%     x = sqrt(1-p^2)*randn(1,N);
+%     x = filter( 1,[1 -p],x);
+%     gx = conv(g,x);
+%     y = conv(gx, h);
+% end
+% y = y/average;
+% figure(); stem(y(2*N:3*N));
+% figure()
+% stem(g);hold on
+%plot(abs(GT),'r')
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+##### SOURCE END #####
+--></body></html>
