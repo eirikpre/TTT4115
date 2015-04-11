@@ -1,4 +1,7 @@
 close all
+%% o1
+% Each channel is represented by a color. That way I can plot every channel
+% in one plot. This follows through the entire exercise set.
 N = 10;
 s = [1 zeros(1,N-1)];
 k = tan([.39 .41 .45 .49]*pi);
@@ -100,7 +103,24 @@ plot(p8,'b--');
 hold off
 
 %% 2f
+% The noise only functions at one channel at the time, and it works like
+% adding a constant to the channel. 
+noise = sin(2*pi*.3)/10;
+g = y + noise;
+[p1, p2, p3, p4, p5, p6, p7, p8]=RFB(filter(v,1,g),k);
+
+figure; hold on; title('2e: Output of the chain with sinusodial noise')
+plot(p1)
+plot(p2,'g')
+plot(p3,'y');
+plot(p4,'m');
+plot(p5,'c');
+plot(p6,'r');
+plot(p7,'k');
+plot(p8,'b--');
+hold off
 
 
-
-
+%% Oppgave 3
+% Oppg3 was too hard to solve. I had a look at the solution, but that didn't
+% clarify the problem.
